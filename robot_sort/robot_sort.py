@@ -96,9 +96,82 @@ class SortingRobot:
         """
         Sort the robot's list.
         """
-        # Fill this out
-        pass
 
+        """
+        Thoughts:
+        An optimal solution feels like it would be structured like so:
+        - As we move right, find the largest element and place it at 
+        the end.
+        - As we move left, find the smallest element and place it at 
+        the beginning.
+        - Now, each end is sorted. Perhaps we could set indices as 
+        sorted-unsorted boundaries?
+
+        After some reflection, we only have one "boundary" to work with 
+        (the None value left behind when the robot picks up an item) so 
+        2-way sorting doesn't seem possible to implement (at least with 
+        my knowledge rn)
+        """
+
+        """ 
+        Plan:
+        - Turn light on
+        -  While can_move_right:
+        -   Move right
+        -   Compare
+        -   Swap if item in list is smaller. Once we reach the end of 
+        the list, we are holding the smallest element in the unsorted 
+        list.
+        - Now we move left until we find our None value in the list. We
+        place the smallest element in the beginning. We immediately 
+        move to the right (if possible) and pick up the value there, 
+        leaving a None value at the next position. This None value 
+        serves as our sorted-unsorted boundary.
+        - Repeat this process until we've reached the end of the list.
+        """
+        
+        # Turns robot's light on so it can see.
+        self.set_light_on
+        
+        """
+        Picks up item at first index of unsorted array, leaving None at 
+        that index. This while loop allows us to repeat the process of 
+        traversing the list to the right, searching for the smallest 
+        element and traversing back to the left and placing it at the
+        sorted-unsorted barrier. When we are no longer able to move 
+        right, our list is sorted.
+        """
+        while self.can_move_right():
+            self.swap_item()
+
+            """
+            While we are able to move right, move right and compare 
+            currently held item. Swap if necessary. At the end of this 
+            while loop our robot is holding the smallest element in the 
+            unsorted portion of the list.
+            """
+            while self.can_move_right():
+                self.move_right()
+                if self.compare_item() == 1:
+                    self.swap_item()
+
+            """
+            Traverse left in the list until we find our None value 
+            (sorted-unsorted barrier)
+            """
+            while self.compare_item() != None:
+                self.move_left()
+                
+            """
+            Our robot is currently holding the smallest element in the 
+            unsorted array and is at the sorted-unsorted barrier. Place 
+            smallest element at this barrier and move right.
+            """
+            self.swap_item()
+            self.move_right()
+        
+        # List is now sorted. Robot's light can be turned off. Good job, bud.
+        self.set_light_off()
 
 if __name__ == "__main__":
     # Test our your implementation from the command line
